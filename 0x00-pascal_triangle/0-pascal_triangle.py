@@ -1,4 +1,4 @@
-#!/user/bin/python3
+#!/usr/bin/python3
 def pascal_triangle(n):
     """
     Generate Pascal's triangle up to row n
@@ -21,5 +21,10 @@ def pascal_triangle(n):
 
     return triangle
 
-# Test the function
-print(pascal_triangle(5))  # Output the Pascal's triangle up to row 5
+def print_triangle(triangle):
+    """
+    Print the triangle
+    """
+    for row in triangle:
+        print(" ".join([str(x) for x in row]))
+
