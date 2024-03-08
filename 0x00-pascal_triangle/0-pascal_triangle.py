@@ -21,7 +21,7 @@ def pascal_triangle(n):
         for j in range(1, i):
             # Iterate over each element of
             # the row (excluding the first and last)
-            # Calculate the value of the element
+            # Calculate the value of the element 
             # using the values from the previous row
             row[j] = triangle[i - 1][j - 1] + triangle[i - 1][j]
         triangle.append(row)  # Append the completed row to the triangle
