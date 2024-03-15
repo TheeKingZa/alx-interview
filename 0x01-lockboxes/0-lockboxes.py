@@ -4,7 +4,8 @@ def canUnlockAll(boxes):
     Determines if all the boxes can be opened.
 
     Args:
-    - boxes: A list of lists where each inner list represents a box and contains keys to other boxes.
+    - boxes: A list of lists where each inner list represents
+      a box and contains keys to other boxes.
 
     Returns:
     - True if all boxes can be opened, else False.
@@ -24,12 +25,15 @@ def canUnlockAll(boxes):
     while keys_to_explore:
         key = keys_to_explore.pop()  # Get the last key
         if key < 0 or key >= num_boxes or key in visited:
-            continue  # Skip invalid keys or keys to already visited boxes
+            continue
+        # Skip invalid keys or keys to already visited boxes
         visited.add(key)  # Mark the box as visited
-        keys_to_explore.extend(boxes[key])  # Add keys from the current box to explore
+        keys_to_explore.extend(boxes[key])
+        # Add keys from the current box to explore
 
     # Check if all boxes have been visited
     return len(visited) == num_boxes
+
 
 # Test cases
 boxes1 = [[1], [2], [3], [4], []]
