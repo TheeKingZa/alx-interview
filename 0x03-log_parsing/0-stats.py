@@ -1,71 +1,58 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 import sys
 import signal
+import re
 
-# Dictionary to store the count of each status code
-status_counts = {
-    200: 0,
-    301: 0,
-    400: 0,
-    401: 0,
-    403: 0,
-    404: 0,
-    405: 0,
-    500: 0
-}
-
-total_file_size = 0  # Total file size counter
-line_count = 0  # Line counter
+# Define variables to store statistics
+total_file_size = 0
+status_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+line_count = 0
 
 def print_statistics():
-    """Print statistics based on the collected data."""
-    global total_file_size
-    global status_counts
-    print("File size:", total_file_size)
-    for code, count in sorted(status_counts.items()):
+    """
+    Print current statistics including total file size and counts for each status code.
+    """
+    # Print total file size and counts for each status code
+    global total_file_size, status_counts
+    print("File size: {}".format(total_file_size))
+    for status_code, count in sorted(status_counts.items()):
         if count > 0:
-            print(f"{code}: {count}")
+            print("{}: {}".format(status_code, count))
+
+def parse_line(line):
+    """
+    Extract status code and file size from the line using regular expressions.
+    Update total file size and status counts accordingly.
+    """
+    # Extract status code and file size from the line using regex
+    global total_file_size, status_counts
+    match = re.match(r'^\d+\.\d+\.\d+\.\d+ - \[.*\] "GET /projects/260 HTTP/1.1" (\d+) (\d+)$', line)
+    if match:
+        status_code = int(match.group(1))
+        file_size = int(match.group(2))
+        # Update total file size
+        total_file_size += file_size
+        # Update status count
+        if status_code in status_counts:
+            status_counts[status_code] += 1
 
 def signal_handler(sig, frame):
-    """Handle keyboard interruption (CTRL + C)"""
+    """
+    Signal handler function to print statistics on keyboard interruption.
+    """
+    # Print statistics on keyboard interruption
     print_statistics()
     sys.exit(0)
 
 # Register signal handler for keyboard interruption
 signal.signal(signal.SIGINT, signal_handler)
 
-# Process input line by line
+# Read from stdin line by line
 for line in sys.stdin:
-    try:
-        # Split the line by whitespace
-        parts = line.split()
-
-        # Check if the line matches the expected format
-        if len(parts) != 10 or parts[3] != '"GET' or parts[5] != 'HTTP/1.1"':
-            continue
-
-        # Extract file size and status code
-        file_size = int(parts[9])
-        status_code = int(parts[8])
-
-        # Update total file size
-        total_file_size += file_size
-
-        # Update status code count
-        if status_code in status_counts:
-            status_counts[status_code] += 1
-
-        # Increment line count
-        line_count += 1
-
-        # Print statistics after every 10 lines
-        if line_count % 10 == 0:
-            print_statistics()
-
-    except Exception as e:
-        # Skip line if there's any error
-        continue
-
-# Print final statistics
-print_statistics()
+    # Parse each line and update statistics
+    parse_line(line.strip())
+    line_count += 1
+    # Print statistics every 10 lines
+    if line_count % 10 == 0:
+        print_statistics()
