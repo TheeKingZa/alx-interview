@@ -1,8 +1,12 @@
 #!/usr/bin/python3
+"""
+Pascal Triangle Interview Challenge
+"""
+
 
 def pascal_triangle(n):
     """
-    Generate Pascal's triangle up to the nth row.
+    Generate Pascal's.
 
     Args:
         n (int): Number of rows to generate in the Pascal's triangle.
@@ -38,4 +42,3 @@ def pascal_triangle(n):
         triangle.append(new_row)
 
     return triangle
-
