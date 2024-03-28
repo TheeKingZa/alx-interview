@@ -5,41 +5,36 @@ def pascal_triangle(n):
     Generate Pascal's triangle up to the nth row.
 
     Args:
-        n (int): The number of rows to generate in Pascal's triangle.
+        n (int): Number of rows to generate in the Pascal's triangle.
 
     Returns:
-        list: A list of lists representing Pascal's triangle up to the nth row.
-
-    Raises:
-        ValueError: If n is less than or equal to 0.
+        list: A list of lists representing the Pascal's triangle.
     """
     # Check if n is less than or equal to 0
     if n <= 0:
-        raise ValueError("n must be greater than 0")
+        return []
 
-    # Initialize Pascal's triangle with the first row [1]
-    pascal = [[1]]
+    # Initialize Pascal's triangle list
+    triangle = []
 
-    # Iterate over each row from the second row up to the nth row
-    for i in range(1, n):
-        # Create a new row and initialize it with 1 (the first element)
-        row = [1]
-        # Get the previous row
-        prev = pascal[i - 1]
+    # Iterate over each row
+    for i in range(n):
+        # Initialize a new row with zeros
+        new_row = [0] * (i + 1)
 
-        # Iterate over each element of the previous row (except the last one)
-        for j in range(len(prev) - 1):
-            # Calculate the new element by summing up
-            # the current and next element
-            new = prev[j] + prev[j + 1]
-            # Append the new element to the current row
-            row.append(new)
+        # Set the first and last element of the row to 1
+        new_row[0] = 1
+        new_row[-1] = 1
 
-        # Append 1 to the end of the current row (the last element)
-        row.append(1)
+        # Calculate values for non-edge elements
+        for j in range(1, i):
+            # Get the values from the previous row
+            a = triangle[i - 1][j]
+            b = triangle[i - 1][j - 1]
+            # Calculate the new value for the current position
+            new_row[j] = a + b
 
-        # Append the current row to Pascal's triangle
-        pascal.append(row)
+        # Append the new row to the triangle
+        triangle.append(new_row)
 
-    # Return Pascal's triangle
-    return pascal
+    return triangle
