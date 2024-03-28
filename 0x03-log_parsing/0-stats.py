@@ -15,7 +15,7 @@ def print_msg(dict_sc, total_file_size):
 
     # Print total file size
     print("File size: {}".format(total_file_size))
-    
+
     # Print status codes with their counts, excluding those with count 0
     for key, val in sorted(dict_sc.items()):
         if val != 0:
@@ -36,14 +36,14 @@ dict_sc = {"200": 0,
            "404": 0,
            "405": 0,
            "500": 0
-}
+           }
 
 try:
     # Iterate over each line from standard input
     for line in sys.stdin:
         # Split the line by whitespace
         parsed_line = line.split()  # ✄ trimming
-        
+
         # Reverse the parsed line
         parsed_line = parsed_line[::-1]  # inverting
 
@@ -56,7 +56,7 @@ try:
             if counter <= 10:
                 # Add the file size to total_file_size
                 total_file_size += int(parsed_line[0])  # file size
-                
+
                 # Get the status code
                 code = parsed_line[1]  # status code
 
@@ -69,7 +69,7 @@ try:
             if (counter == 10):
                 # Print aggregated status codes and total file size
                 print_msg(dict_sc, total_file_size)
-                
+
                 # Reset counter
                 counter = 0
 
