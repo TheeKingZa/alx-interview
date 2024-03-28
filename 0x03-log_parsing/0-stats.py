@@ -1,58 +1,78 @@
 #!/usr/bin/python3
 
 import sys
-import signal
-import re
 
-# Define variables to store statistics
-total_file_size = 0
-status_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-line_count = 0
 
-def print_statistics():
+def print_msg(dict_sc, total_file_size):
     """
-    Print current statistics including total file size and counts for each status code.
+    Method to print aggregated status codes and total file size
+    Args:
+        dict_sc: dict of status codes
+        total_file_size: total of the file
+    Returns:
+        Nothing
     """
-    # Print total file size and counts for each status code
-    global total_file_size, status_counts
+
+    # Print total file size
     print("File size: {}".format(total_file_size))
-    for status_code, count in sorted(status_counts.items()):
-        if count > 0:
-            print("{}: {}".format(status_code, count))
+    
+    # Print status codes with their counts, excluding those with count 0
+    for key, val in sorted(dict_sc.items()):
+        if val != 0:
+            print("{}: {}".format(key, val))
 
-def parse_line(line):
-    """
-    Extract status code and file size from the line using regular expressions.
-    Update total file size and status counts accordingly.
-    """
-    # Extract status code and file size from the line using regex
-    global total_file_size, status_counts
-    match = re.match(r'^\d+\.\d+\.\d+\.\d+ - \[.*\] "GET /projects/260 HTTP/1.1" (\d+) (\d+)$', line)
-    if match:
-        status_code = int(match.group(1))
-        file_size = int(match.group(2))
-        # Update total file size
-        total_file_size += file_size
-        # Update status count
-        if status_code in status_counts:
-            status_counts[status_code] += 1
 
-def signal_handler(sig, frame):
-    """
-    Signal handler function to print statistics on keyboard interruption.
-    """
-    # Print statistics on keyboard interruption
-    print_statistics()
-    sys.exit(0)
+# Initialize variables
+total_file_size = 0
+code = 0
+counter = 0
 
-# Register signal handler for keyboard interruption
-signal.signal(signal.SIGINT, signal_handler)
+# Initialize dictionary to store status codes and their counts
+dict_sc = {"200": 0,
+           "301": 0,
+           "400": 0,
+           "401": 0,
+           "403": 0,
+           "404": 0,
+           "405": 0,
+           "500": 0
+}
 
-# Read from stdin line by line
-for line in sys.stdin:
-    # Parse each line and update statistics
-    parse_line(line.strip())
-    line_count += 1
-    # Print statistics every 10 lines
-    if line_count % 10 == 0:
-        print_statistics()
+try:
+    # Iterate over each line from standard input
+    for line in sys.stdin:
+        # Split the line by whitespace
+        parsed_line = line.split()  # ✄ trimming
+        
+        # Reverse the parsed line
+        parsed_line = parsed_line[::-1]  # inverting
+
+        # Check if the parsed line has more than 2 elements
+        if len(parsed_line) > 2:
+            # Increment counter
+            counter += 1
+
+            # Check if the counter is less than or equal to 10
+            if counter <= 10:
+                # Add the file size to total_file_size
+                total_file_size += int(parsed_line[0])  # file size
+                
+                # Get the status code
+                code = parsed_line[1]  # status code
+
+                # Check if the status code is in the dictionary
+                if (code in dict_sc.keys()):
+                    # Increment the count for the status code
+                    dict_sc[code] += 1
+
+            # Check if the counter is equal to 10
+            if (counter == 10):
+                # Print aggregated status codes and total file size
+                print_msg(dict_sc, total_file_size)
+                
+                # Reset counter
+                counter = 0
+
+finally:
+    # Print aggregated status codes and total file size
+    print_msg(dict_sc, total_file_size)
