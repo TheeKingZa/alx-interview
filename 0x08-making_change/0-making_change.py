@@ -1,37 +1,46 @@
 #!/usr/bin/python3
+
+
 def makeChange(coins, total):
     """
-    Determines the fewest number of coins needed to meet a given total amount.
+    Calculates the minimum number of coins
+    needed to make change for a given total.
 
     Args:
-        coins (list): List of coin denominations available.
-        total (int): Target total amount.
+    coins (list): List of coin denominations available.
+    total (int): Total amount for which change needs to be made.
 
     Returns:
-        int: Fewest number of coins needed to meet total.
-        Returns -1 if total cannot be met.
+    int: Minimum number of coins needed to make change for the total.
+    Returns -1 if coins list is empty or None,
+            or if total is less than or equal to 0.
     """
+    # Check if coins list is empty or None
+    if not coins or coins is None:
+        return -1
+    # Check if total is less than or equal to 0
     if total <= 0:
         return 0
 
-    # Create a list to store the fewest number of coins needed for each amount
-    dp = [float('inf')] * (total + 1)
-    dp[0] = 0
+    # Initialize the variable to store the total
+    # number of coins needed for change
+    change = 0
 
-    # Iterate over all possible amounts from 1 to total
-    for i in range(1, total + 1):
-        # Iterate over each coin denomination
-        for coin in coins:
-            # If the current coin value is less than or
-            # equal to the current amount
-            if coin <= i:
-                # Update the fewest number of coins
-                # needed for the current amount
-                dp[i] = min(dp[i], dp[i - coin] + 1)
+    # Sort the coins in descending order to
+    # start with the largest denomination first
+    coins = sorted(coins)[::-1]
 
-    # If dp[total] is still infinity,
-    # total cannot be met by any combination of coins
-    if dp[total] == float('inf'):
-        return -1
-    else:
-        return dp[total]
+    # Iterate through each coin denomination
+    for coin in coins:
+        # While the coin denomination is less than
+        # or equal to the remaining total
+        while coin <= total:
+            # Subtract the coin denomination from the total
+            total -= coin
+            # Increment the count of coins used for change
+            change += 1
+        # If the total becomes 0, return the total count of coins used
+        if total == 0:
+            return change
+    # If it's not possible to make exact change for the total, return -1
+    return -1
