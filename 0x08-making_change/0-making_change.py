@@ -1,4 +1,9 @@
 #!/usr/bin/python3
+'''
+Coins of different values,
+determine number of coins needed to meet
+a given amount total.
+'''
 import sys
 
 
