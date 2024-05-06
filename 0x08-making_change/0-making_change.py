@@ -15,8 +15,6 @@ def makeChange(coins, total):
              Returns -1 if it's impossible to make the
              total amount with the given coins.
     """
-
-    # If the total amount is non-positive, return 0 coins needed
     if total <= 0:
         return 0
     table = [sys.maxsize for i in range(total + 1)]
